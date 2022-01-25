@@ -1,0 +1,3 @@
+[submodule "comfystring"]
+	path = comfystring
+	url = https://github.com/mradek290/comfystring.git
