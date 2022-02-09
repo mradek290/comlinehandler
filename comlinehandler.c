@@ -67,6 +67,11 @@ void clhHandlerAddOption( clhHandler* handler, clhOption* option, clhError* e ){
         return;
     }
 
+    if( !option->Function ){
+        *e = clhNoFunctionProvided;
+        return;
+    }
+
     if( cfstrNullOrEmpty(option->Option) ){
         *e = clhInvalidOptionDesignator;
         return;
@@ -93,7 +98,7 @@ void clhHandlerAddOption( clhHandler* handler, clhOption* option, clhError* e ){
             return;
         }
 
-        char* qa = q->opt->Aliases;
+        char** qa = q->opt->Aliases;
         unsigned i = q->opt->AliasCount;
         while( i-- > 0 ){
 
@@ -103,7 +108,7 @@ void clhHandlerAddOption( clhHandler* handler, clhOption* option, clhError* e ){
             }
 
             for( unsigned j = 0; j < option->AliasCount; ++j )
-                if( cfstrCompare( option->Aliases[i], qa[i] ){
+                if( cfstrCompare( option->Aliases[j], qa[i] ) ){
                     *e = clhDuplicateOptionDesignator;
                     return;
                 }
@@ -152,7 +157,7 @@ void clhFreeHandler( clhHandler* handler ){
             for( unsigned i = 0; i < handler->OptionCount; ++i )
                 clhFreeOption(handler->Options.arr[i]);
 
-            free(handler->Options);
+            free(handler->Options.arr);
 
         }else{
 
@@ -168,6 +173,12 @@ void clhFreeHandler( clhHandler* handler ){
     }
 
     free(handler);
+}
+
+int clh__compf_( const void* a, const void* b ){
+    const clhOption* clho0 = (const clhOption*) a;
+    const clhOption* clho1 = (const clhOption*) b;
+    return clho0->Priority - clho1->Priority;
 }
 
 void clhHandlerReady( clhHandler* handler, clhError* e ){
@@ -198,7 +209,7 @@ void clhHandlerReady( clhHandler* handler, clhError* e ){
     _Bool hasprimary = 0;
 
     while( nd ){
-        hasprimary |= nd->Primary;
+        hasprimary |= nd->opt->Primary;
         *q1++ = nd->opt;
         struct clhnode__* t = nd;
         nd = nd->nxt;
@@ -211,6 +222,8 @@ void clhHandlerReady( clhHandler* handler, clhError* e ){
         *e = clhNoPrimary;
         return;
     }
+
+    qsort( q0, handler->OptionCount, sizeof(clhOption), clh__compf_ );
 
     *e = clhNoError;
 }
