@@ -15,13 +15,15 @@ typedef enum {
     clhNoOptionsProvided,
     clhDuplicateOptionDesignator,
     clhInvalidOptionDesignator,
-    clhNoPrimary
+    clhNoPrimary,
+    clhNoFunctionProvided
 } clhError;
 
 typedef int (*clhMainFunc)( const char*, int, int );
 
 typedef struct {
     char* Option;
+    char* Description;
     clhMainFunc Function;
     char** Aliases;
     unsigned AliasCount;

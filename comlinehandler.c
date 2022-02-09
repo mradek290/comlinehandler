@@ -3,6 +3,7 @@
 #define COMLINEHANDLER_IMPL
 
 #include "comlinehandler.h"
+#include "comlineerrors.c"
 
 clhOption* clhCreateOption(){
     return (clhOption*) calloc( 1, sizeof(clhOption) );
