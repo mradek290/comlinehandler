@@ -58,4 +58,6 @@ void clhHandlerReady( clhHandler*, clhError* );
 void clhFreeOption( clhOption* );
 void clhFreeHandler( clhHandler* );
 
+void clhApplyArguments( clhHandler*, const char**, int );
+
 #endif
