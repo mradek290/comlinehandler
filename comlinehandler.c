@@ -177,8 +177,8 @@ void clhFreeHandler( clhHandler* handler ){
 }
 
 int clh__compf_( const void* a, const void* b ){
-    const clhOption* clho0 = (const clhOption*) a;
-    const clhOption* clho1 = (const clhOption*) b;
+    const clhOption* clho0 = *(const clhOption**) a;
+    const clhOption* clho1 = *(const clhOption**) b;
     return clho0->Priority - clho1->Priority;
 }
 
@@ -224,7 +224,7 @@ void clhHandlerReady( clhHandler* handler, clhError* e ){
         return;
     }
 
-    qsort( q0, handler->OptionCount, sizeof(clhOption), clh__compf_ );
+    qsort( q0, handler->OptionCount, sizeof(clhOption*), clh__compf_ );
 
     *e = clhNoError;
 }
