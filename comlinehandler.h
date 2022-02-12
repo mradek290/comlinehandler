@@ -16,10 +16,12 @@ typedef enum {
     clhDuplicateOptionDesignator,
     clhInvalidOptionDesignator,
     clhNoPrimary,
-    clhNoFunctionProvided
+    clhNoFunctionProvided,
+    clhHandlerNotReady,
+    clhNoPrimaryCall
 } clhError;
 
-typedef int (*clhMainFunc)( const char*, int, int );
+typedef int (*clhMainFunc)( const char**, int, int );
 
 typedef struct {
     char* Option;
@@ -58,6 +60,6 @@ void clhHandlerReady( clhHandler*, clhError* );
 void clhFreeOption( clhOption* );
 void clhFreeHandler( clhHandler* );
 
-void clhApplyArguments( clhHandler*, const char**, int );
+int clhApplyArguments( clhHandler*, const char**, int, clhError* );
 
 #endif
