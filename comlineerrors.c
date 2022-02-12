@@ -14,7 +14,9 @@ const char* clhErrorDescription[] = {
     "Option Name was already registered",
     "Option name is empty or otherwise invalid",
     "Trying to ready handler without primary Option",
-    "Trying to register Option without Function pointer"
+    "Trying to register Option without Function pointer",
+    "Trying to use non ready handler",
+    "Program was invoked without any primary function"
 };
 
 #endif
