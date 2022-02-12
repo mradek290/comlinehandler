@@ -218,6 +218,7 @@ void clhHandlerReady( clhHandler* handler, clhError* e ){
     }
 
     handler->Options.arr = q0;
+    handler->Ready = 1;
 
     if( !hasprimary ){
         *e = clhNoPrimary;
@@ -227,6 +228,61 @@ void clhHandlerReady( clhHandler* handler, clhError* e ){
     qsort( q0, handler->OptionCount, sizeof(clhOption*), clh__compf_ );
 
     *e = clhNoError;
+}
+
+int clhApplyArguments( clhHandler* handler, const char** args, int argc, clhError* e ){
+
+    clhError dummy;
+    if( !e ){
+        e = &dummy;
+    }
+
+    if( !(handler->Ready) ){
+        *e = clhHandlerNotReady;
+        return EXIT_FAILURE;
+    }
+
+    char* parameters[argc];
+    for( unsigned i = 0; i < argc; ++i ){
+        parameters[i] = cfstrCreate(args[i]);
+    }
+
+    int return_value;
+    unsigned i = handler->OptionCount;
+    _Bool usedprimary = 0;
+    while( i-- > 0 && !usedprimary ){
+
+        clhOption* opt = handler->Options.arr[i];
+        for( unsigned j = 0; j < argc; ++j ){
+
+            for( unsigned k = 0; k < opt->AliasCount; ++k ){
+                if( cfstrCompare( opt->Aliases[k], parameters[j]) ){
+
+                    return_value = opt->Function( args, argc, j );
+                    usedprimary = opt->Primary;
+                    j = argc; //forcing outer loop to texit
+                    break;
+                }
+            }
+
+            if( cfstrCompare(opt->Option,parameters[j]) ){
+
+                opt->Function( args, argc, j );
+                usedprimary = opt->Primary;
+                break;
+            }
+        }
+    }
+
+    if( !usedprimary ){
+        *e = clhNoPrimaryCall;
+    }
+
+    for( unsigned j = 0; j < argc; ++j ){
+        cfstrFree(parameters[i]);
+    }
+
+    return return_value;
 }
 
 #endif
